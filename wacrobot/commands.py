@@ -1,11 +1,7 @@
-from enum import Enum
 import asyncio
+from enum import Enum
 
 from bleak import BleakClient
-from bleak.backends.characteristic import BleakGATTCharacteristic
-
-WHEELS_SERVICE_UUID: str = '1A240001-C2ED-4D11-AD1E-FC06D8A02D37'
-WHEELS_CONFIG_CHAR_UUID: str = '1A240002-C2ED-4D11-AD1E-FC06D8A02D37'
 
 class RobotCommandType(Enum):
     LED = 1
@@ -13,18 +9,20 @@ class RobotCommandType(Enum):
     STOP = 3
     WAIT = 4
 
+
 class RobotCommand:
     def __init__(self, command_type: RobotCommandType):
         self.command_type = command_type
 
     def __str__(self):
-        return f'RobotCommand: {self.command_type}'
-    
+        return f"RobotCommand: {self.command_type}"
+
     def command() -> bytes:
         pass
 
     async def execute(self, client: BleakClient):
         pass
+
 
 class LEDCommand(RobotCommand):
     def __init__(self, red: int, green: int, blue: int):
@@ -47,7 +45,12 @@ class LEDCommand(RobotCommand):
         service = client.services.get_service(self._service_uuid)
         char = service.get_characteristic(self._char_uuid) 
 
-        print(f'led service: {service}, config char: {char}')
+    async def execute(self, client: BleakClient):
+        print(f"led command: {self.command()}")
+        service = client.services.get_service(self._service_uuid)
+        char = service.get_characteristic(self._char_uuid)
+
+        print(f"led service: {service}, config char: {char}")
 
         await client.write_gatt_char(char, self.command(), response=True)
         print('sent led command')
@@ -56,7 +59,10 @@ class LEDCommand(RobotCommand):
 class MoveCommand(RobotCommand):
     def __init__(self, left: int, right: int):
         super().__init__(RobotCommandType.MOVE)
-        
+
+        self._service_uuid = '1A240001-C2ED-4D11-AD1E-FC06D8A02D37'
+        self._char_uuid = '1A240002-C2ED-4D11-AD1E-FC06D8A02D37'
+
         left = min(100, max(-100, left))
         right = min(100, max(-100, right))
         
@@ -67,11 +73,11 @@ class MoveCommand(RobotCommand):
 
     def command(self):
         return bytes([self.left_fwd, self.left_rev, self.right_fwd, self.right_rev])
-    
+
     async def execute(self, client: BleakClient):
-        print(f'wheels command: {self.command()}')
-        service = client.services.get_service(WHEELS_SERVICE_UUID)
-        char = service.get_characteristic(WHEELS_CONFIG_CHAR_UUID) 
+        print(f"wheels command: {self.command()}")
+        service = client.services.get_service(self._service_uuid)
+        char = service.get_characteristic(self._char_uuid)
 
         await client.write_gatt_char(char, self.command(), response=True)
         print('sent wheels command')
@@ -84,6 +90,6 @@ class WaitCommand(RobotCommand):
 
     def command(self):
         return bytes()
-    
+
     async def execute(self, client: BleakClient):
         await asyncio.sleep(self.duration)

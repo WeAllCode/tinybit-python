@@ -1,17 +1,13 @@
 import asyncio
-import time
 import json
 from datetime import datetime, timedelta
 from .commands import RobotCommandType, RobotCommand, LEDCommand, MoveCommand, WaitCommand
 from bleak import BleakClient, BleakScanner
 
+
 class Robot:
     def __init__(self, name):
         self.name = name
-        self.led_service_uuid = "1A230001-C2ED-4D11-AD1E-FC06D8A02D37".lower()
-        self.led_char_uuid = "1A230002-C2ED-4D11-AD1E-FC06D8A02D37".lower()
-        self.wheel_service_uuid = "1A240001-C2ED-4D11-AD1E-FC06D8A02D37".lower()
-        self.wheel_char_uuid = "1A240002-C2ED-4D11-AD1E-FC06D8A02D37".lower()
         self.commands = []
 
         with open('wacrobot/devices.json', 'r') as f:
