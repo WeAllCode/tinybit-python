@@ -1,5 +1,7 @@
 import asyncio
+
 from bleak import BleakClient, BleakScanner
+
 
 class Robot:
     def __init__(self, name):
@@ -23,7 +25,6 @@ class Robot:
         print(client)
         for command in self.commands:
             if command[0] == "led":
-
                 service = client.services.get_service(self.led_service_uuid)
                 char = service.get_characteristic(self.led_char_uuid)
 
@@ -35,9 +36,8 @@ class Robot:
                 bytes = bytearray([r, g, b])
 
                 await client.write_gatt_char(char, bytes, response=True)
-                print(f'send led command {bytes} {char}')
+                print(f"send led command {bytes} {char}")
             elif command[0] == "move":
-
                 service = client.services.get_service(self.wheel_service_uuid)
                 char = service.get_characteristic(self.wheel_char_uuid)
 
@@ -49,9 +49,11 @@ class Robot:
                 left_forward = max(0, left)
                 left_backward = max(0, -left)
 
-                bytes = bytearray([right_forward, right_backward, left_forward, left_backward])
+                bytes = bytearray(
+                    [right_forward, right_backward, left_forward, left_backward]
+                )
                 await client.write_gatt_char(char, bytes, response=True)
-                print(f'send move command {bytes} {char}')
+                print(f"send move command {bytes} {char}")
             elif command[0] == "wait":
                 duration = command[1]
                 await asyncio.sleep(duration)
@@ -68,8 +70,8 @@ class Robot:
 
         if device_address is None:
             raise ValueError(f"Device with name {self.name} was not found")
-        
-        print(f'{self.name} found at {device_address}')
+
+        print(f"{self.name} found at {device_address}")
 
         async with BleakClient(device_address) as client:
             print("connected to device")

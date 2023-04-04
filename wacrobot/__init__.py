@@ -1,6 +1,6 @@
 __version__ = "0.1.0"
-__author__ = 'Blaine Rothrock'
-__credits__ = 'We All Code'
+__author__ = "Blaine Rothrock"
+__credits__ = "We All Code"
 
 """
 # TODO:
@@ -15,4 +15,3 @@ __credits__ = 'We All Code'
     - Robot("NAME").move(wheel1, wheel2, duration)
 7. Disconnection handling / stop
 """
-    
