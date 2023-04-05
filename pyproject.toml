@@ -8,6 +8,9 @@ authors = [
 ]
 readme = "README.md"
 
+[tool.isort]
+profile = "black"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 bleak = "^0.20.1"
