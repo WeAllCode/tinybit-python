@@ -1,7 +1,7 @@
 import asyncio
 import json
 from datetime import datetime, timedelta
-from .commands import RobotCommandType, RobotCommand, LEDCommand, MoveCommand, WaitCommand
+from .commands import RobotCommandType, RobotCommand, LEDCommand, MoveCommand, WaitCommand, DisplayTextCommand, DisplayDotMatrixCommand
 from bleak import BleakClient, BleakScanner
 
 
@@ -24,8 +24,20 @@ class Robot:
     def move(self, right, left):
         self.commands.append(MoveCommand(left, right))
 
+    def stop(self):
+        self.commands.append(MoveCommand(0,0))
+
     def wait(self, duration):
         self.commands.append(WaitCommand(duration))
+
+    def displayText(self, text: str):
+        self.commands.append(DisplayTextCommand(text))
+    
+    def displayDots(self, matrix: list[int]):
+        self.commands.append(DisplayDotMatrixCommand(matrix))
+
+    def clearDisplay(self):
+        self.commands.append(DisplayDotMatrixCommand())
 
     async def _execute(self, client):
         print(client)
@@ -41,6 +53,7 @@ class Robot:
             await self._execute(client)
 
     def run(self):
+        self.commands.append(DisplayDotMatrixCommand())
         self.commands.append(MoveCommand(0,0))
         self.commands.append(LEDCommand(0,0,0))
         asyncio.run(self._connect_and_run())
