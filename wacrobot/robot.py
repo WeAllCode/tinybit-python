@@ -1,8 +1,9 @@
 import asyncio
 import json
 
-from bleak import BleakClient, BleakScanner
+from bleak import BleakClient
 
+from . import DEBUG, print_debug
 from .commands import (
     DisplayDotMatrixCommand,
     DisplayTextCommand,
@@ -13,9 +14,10 @@ from .commands import (
 
 
 class Robot:
-    def __init__(self, name):
+    def __init__(self, name, debug=False):
         self.name = name
         self.commands = []
+        DEBUG = debug
 
         with open("wacrobot/devices.json", "r") as f:
             self.device_map = json.load(f)
@@ -47,14 +49,16 @@ class Robot:
         self.commands.append(DisplayDotMatrixCommand())
 
     async def _execute(self, client: BleakClient):
-        print(client)
+        print_debug(client)
+
         for i, command in enumerate(self.commands):
-            print(f"command {i}/{len(self.commands)}")
+            print_debug(f"command {i}/{len(self.commands)}")
+
             await command.execute(client)
 
     async def _connect_and_run(self):
         async with BleakClient(self.address) as client:
-            print("connected to device")
+            print_debug("connected to device")
             await self._execute(client)
 
     def run(self):

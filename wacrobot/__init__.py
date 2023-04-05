@@ -15,3 +15,10 @@ __credits__ = "We All Code"
     - Robot("NAME").move(wheel1, wheel2, duration)
 7. Disconnection handling / stop
 """
+
+DEBUG = False
+
+
+def print_debug(output):
+    if DEBUG:
+        print(output)
