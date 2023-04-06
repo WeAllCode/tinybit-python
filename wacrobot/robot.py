@@ -27,23 +27,29 @@ class Robot:
         else:
             self.address = self.device_map[self.name]
 
-    def led(self, r, g, b):
+    def led(self, r, g, b, duration: float = 0):
         self.commands.append(LEDCommand(r, g, b))
+        self.wait(duration)
 
-    def move(self, right, left):
+    def move(self, right, left, duration: float = 0):
         self.commands.append(MoveCommand(left, right))
+        self.wait(duration)
 
-    def stop(self):
+    def stop(self, duration: float = 0):
         self.commands.append(MoveCommand(0, 0))
+        self.wait(duration)
 
     def wait(self, duration: float):
-        self.commands.append(WaitCommand(duration))
+        if duration > 0:
+            self.commands.append(WaitCommand(duration))
 
-    def displayText(self, text: str):
+    def displayText(self, text: str, duration: float = 0):
         self.commands.append(DisplayTextCommand(text))
+        self.wait(duration)
 
-    def displayDots(self, matrix: list[int]):
+    def displayDots(self, matrix: list[int], duration: float = 0):
         self.commands.append(DisplayDotMatrixCommand(matrix))
+        self.wait(duration)
 
     def clearDisplay(self):
         self.commands.append(DisplayDotMatrixCommand())
@@ -56,13 +62,16 @@ class Robot:
 
             await command.execute(client)
 
+        self.commands = []
+
     async def _connect_and_run(self):
         async with BleakClient(self.address) as client:
             print_debug("connected to device")
             await self._execute(client)
 
-    def run(self):
-        self.commands.append(DisplayDotMatrixCommand())
-        self.commands.append(MoveCommand(0, 0))
-        self.commands.append(LEDCommand(0, 0, 0))
+    def run(self, clear=True):
+        if clear:
+            self.commands.append(DisplayDotMatrixCommand())
+            self.commands.append(MoveCommand(0, 0))
+            self.commands.append(LEDCommand(0, 0, 0))
         asyncio.run(self._connect_and_run())
