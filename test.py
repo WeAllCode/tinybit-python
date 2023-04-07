@@ -1,6 +1,6 @@
 from wacrobot.robot import Robot
 
-robot = Robot("chrip", True)
+robot = Robot("beep", True)
 
 # Display "Hi 123!" for 3 seconds
 robot.displayText("Hi", 1)
@@ -45,6 +45,9 @@ robot.led(0, 255, 0, 0.25)
 
 # Display blue for 0.5 second
 robot.led(0, 0, 255, 0.25)
+
+# Play a tone (Hz) for .5 seconds
+robot.buzz(440, 0.25)
 
 # Move 30, 40, 60, 80, 100, -30, -40, -60, -80, -100 percentages for 0.5 seconds
 for x in (-100, -80, -60, 60, 80, 100):

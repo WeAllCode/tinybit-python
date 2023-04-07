@@ -1,15 +1,16 @@
 import asyncio
 import json
+import logging
 
 from bleak import BleakClient
 
-from . import DEBUG, print_debug
 from .commands import (
     DisplayDotMatrixCommand,
     DisplayTextCommand,
     LEDCommand,
     MoveCommand,
     WaitCommand,
+    BuzzerCommand
 )
 
 
@@ -54,11 +55,15 @@ class Robot:
     def clearDisplay(self):
         self.commands.append(DisplayDotMatrixCommand())
 
-    async def _execute(self, client: BleakClient):
-        print_debug(client)
+    def buzz(self, frequency: int, duration: float = 0):
+        self.commands.append(BuzzerCommand(frequency))
+        self.wait(duration)
+        self.commands.append(BuzzerCommand(0))
 
+    async def _execute(self, client):
+        logging.debug(client)
         for i, command in enumerate(self.commands):
-            print_debug(f"command {i}/{len(self.commands)}")
+            logging.debug(f"command {i}/{len(self.commands)}")
 
             await command.execute(client)
 
@@ -66,7 +71,7 @@ class Robot:
 
     async def _connect_and_run(self):
         async with BleakClient(self.address) as client:
-            print_debug("connected to device")
+            logging.debug("connected to device")
             await self._execute(client)
 
     def run(self, clear=True):
@@ -74,4 +79,5 @@ class Robot:
             self.commands.append(DisplayDotMatrixCommand())
             self.commands.append(MoveCommand(0, 0))
             self.commands.append(LEDCommand(0, 0, 0))
+            self.commands.append(BuzzerCommand(0))
         asyncio.run(self._connect_and_run())

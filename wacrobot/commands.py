@@ -1,21 +1,12 @@
 import asyncio
+import logging
 from enum import Enum
 
 from bleak import BleakClient
 
-from . import print_debug
-
-
-class RobotCommandType(Enum):
-    LED = 1
-    MOVE = 2
-    STOP = 3
-    WAIT = 4
-
-
 class RobotCommand:
-    def __init__(self, command_type: RobotCommandType):
-        self.command_type = command_type
+    def __init__(self):
+        pass
 
     def __str__(self):
         return f"RobotCommand: {self.command_type}"
@@ -29,7 +20,7 @@ class RobotCommand:
 
 class LEDCommand(RobotCommand):
     def __init__(self, red: int, green: int, blue: int):
-        super().__init__(RobotCommandType.LED)
+        super().__init__()
 
         self._service_uuid = "1A230001-C2ED-4D11-AD1E-FC06D8A02D37"
         self._char_uuid = "1A230002-C2ED-4D11-AD1E-FC06D8A02D37"
@@ -43,19 +34,19 @@ class LEDCommand(RobotCommand):
         return bytes([self.red, self.green, self.blue])
 
     async def execute(self, client: BleakClient):
-        print_debug(f"led command: {self.command()}")
+        logging.debug(f"led command: {self.command()}")
         service = client.services.get_service(self._service_uuid)
         char = service.get_characteristic(self._char_uuid)
 
-        print_debug(f"led service: {service}, config char: {char}")
+        logging.debug(f"led service: {service}, config char: {char}")
 
         await client.write_gatt_char(char, self.command(), response=True)
-        print_debug("sent led command")
+        logging.debug("sent led command")
 
 
 class MoveCommand(RobotCommand):
     def __init__(self, left: int, right: int):
-        super().__init__(RobotCommandType.MOVE)
+        super().__init__()
 
         self._service_uuid = "1A240001-C2ED-4D11-AD1E-FC06D8A02D37"
         self._char_uuid = "1A240002-C2ED-4D11-AD1E-FC06D8A02D37"
@@ -72,17 +63,17 @@ class MoveCommand(RobotCommand):
         return bytes([self.left_fwd, self.left_rev, self.right_fwd, self.right_rev])
 
     async def execute(self, client: BleakClient):
-        print_debug(f"wheels command: {self.command()}")
+        logging.debug(f"wheels command: {self.command()}")
         service = client.services.get_service(self._service_uuid)
         char = service.get_characteristic(self._char_uuid)
 
         await client.write_gatt_char(char, self.command(), response=True)
-        print_debug("sent wheels command")
+        logging.debug("sent wheels command")
 
 
 class DisplayTextCommand(RobotCommand):
     def __init__(self, text: str):
-        super().__init__(RobotCommandType.LED)
+        super().__init__()
 
         self._service_uuid = "1A250001-C2ED-4D11-AD1E-FC06D8A02D37"
         self._char_uuid = "1A250002-C2ED-4D11-AD1E-FC06D8A02D37"
@@ -93,17 +84,17 @@ class DisplayTextCommand(RobotCommand):
         return bytes([0x01] + list(self.text.encode("ascii")))
 
     async def execute(self, client: BleakClient):
-        print_debug(f"display text command: {self.text} (command: {self.command()})")
+        logging.debug(f"display text command: {self.text} (command: {self.command()})")
         service = client.services.get_service(self._service_uuid)
         char = service.get_characteristic(self._char_uuid)
 
         await client.write_gatt_char(char, self.command(), response=True)
-        print_debug("sent display text command")
+        logging.debug("sent display text command")
 
 
 class DisplayDotMatrixCommand(RobotCommand):
     def __init__(self, matrix: list[int] = [0] * 25):
-        super().__init__(RobotCommandType.LED)
+        super().__init__()
 
         self._service_uuid = "1A250001-C2ED-4D11-AD1E-FC06D8A02D37"
         self._char_uuid = "1A250002-C2ED-4D11-AD1E-FC06D8A02D37"
@@ -114,17 +105,38 @@ class DisplayDotMatrixCommand(RobotCommand):
         return bytes([0x02] + self.matrix)
 
     async def execute(self, client: BleakClient):
-        print_debug(f"display text command: {self.matrix} (command: {self.command()})")
+        logging.debug(f"display text command: {self.matrix} (command: {self.command()})")
         service = client.services.get_service(self._service_uuid)
         char = service.get_characteristic(self._char_uuid)
 
         await client.write_gatt_char(char, self.command(), response=True)
-        print_debug("sent display text command")
+        logging.debug('sent display text command')
+
+
+class BuzzerCommand(RobotCommand):
+    def __init__(self, frequency: int):
+        super().__init__()
+
+        self._service_uuid = '1A260001-C2ED-4D11-AD1E-FC06D8A02D37'
+        self._char_uuid = '1A260002-C2ED-4D11-AD1E-FC06D8A02D37'
+
+        self.frequency = frequency
+
+    def command(self):
+        return self.frequency.to_bytes(2, 'big')
+    
+    async def execute(self, client: BleakClient):
+        logging.debug(f"buzzer command: {self.frequency}Hz, ({self.command()})")
+        service = client.services.get_service(self._service_uuid)
+        char = service.get_characteristic(self._char_uuid)
+
+        await client.write_gatt_char(char, self.command(), response=True)
+        logging.debug('sent buzzer command')
 
 
 class WaitCommand(RobotCommand):
-    def __init__(self, duration: float):
-        super().__init__(RobotCommandType.WAIT)
+    def __init__(self, duration: int):
+        super().__init__()
         self.duration = duration
 
     def command(self):
