@@ -2,18 +2,15 @@ import asyncio
 import json
 import logging
 
-from bleak import (
-    BleakClient,
-    BleakScanner
-)
+from bleak import BleakClient, BleakScanner
 
 from .commands import (
+    BuzzerCommand,
     DisplayDotMatrixCommand,
     DisplayTextCommand,
     LEDCommand,
     MoveCommand,
     WaitCommand,
-    BuzzerCommand
 )
 
 
@@ -21,7 +18,6 @@ class Robot:
     def __init__(self, name, debug=False, scan_timeout=2.0):
         self.name = name
         self.commands = []
-        DEBUG = debug
         self.scan_timeout = scan_timeout
 
         with open("wacrobot/devices_name.json", "r") as f:
@@ -82,10 +78,10 @@ class Robot:
             if d.name == self.name:
                 device = d
                 break
-        
+
         if device is None:
             raise Exception("Device not found")
-        
+
         logging.debug(f"found device {device.name} at {device.address}")
 
         async with BleakClient(device.address) as client:

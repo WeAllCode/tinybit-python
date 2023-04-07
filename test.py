@@ -1,10 +1,10 @@
 from wacrobot.robot import Robot
 
-# Create a robot named "hoot"
-name = "beep"
+# Create a robot
+name = "honk"
 robot = Robot(name)
 
-# Display "Hi 123!" for 3 seconds
+# Display the robot's name (uppercased) on the robot's display for 2.5 seconds
 robot.displayText(name.upper(), 2.5)
 
 # Display bullseye for 1 second
