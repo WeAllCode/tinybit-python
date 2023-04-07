@@ -16,7 +16,7 @@ from .commands import (
 
 class Robot:
     def __init__(self, name, debug=False, scan_timeout=2.0):
-        self.name = name
+        self.name = name.lower()
         self.commands = []
         self.scan_timeout = scan_timeout
 

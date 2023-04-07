@@ -1,7 +1,7 @@
 from wacrobot.robot import Robot
 
 # Create a robot
-name = "honk"
+name = "bzzt"
 robot = Robot(name)
 
 # Display the robot's name (uppercased) on the robot's display for 2.5 seconds
@@ -53,7 +53,6 @@ robot.buzz(440, 0.25)
 
 # Move 30, 40, 60, 80, 100, -30, -40, -60, -80, -100 percentages for 0.5 seconds
 for x in [-100, -80, -60, 60, 80, 100]:
-    print(x)
     # Move forward at x% speed for 0.5 seconds
     robot.move(x, -x, 0.25)
     robot.stop()
