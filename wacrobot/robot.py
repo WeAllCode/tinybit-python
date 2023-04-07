@@ -18,10 +18,11 @@ from .commands import (
 
 
 class Robot:
-    def __init__(self, name, debug=False):
+    def __init__(self, name, debug=False, scan_timeout=2.0):
         self.name = name
         self.commands = []
         DEBUG = debug
+        self.scan_timeout = scan_timeout
 
         with open("wacrobot/devices_name.json", "r") as f:
             self.device_map = json.load(f)
@@ -30,8 +31,6 @@ class Robot:
             self.name = name
         else:
             self.name = self.device_map[self.name]
-
-        print(self.name)
 
     def led(self, r, g, b, duration: float = 0):
         self.commands.append(LEDCommand(r, g, b))
@@ -76,7 +75,7 @@ class Robot:
 
     async def _connect_and_run(self):
         scanner = BleakScanner()
-        devices = await scanner.discover(timeout=2.0, return_adv=False)
+        devices = await scanner.discover(timeout=self.scan_timeout, return_adv=False)
 
         device = None
         for d in devices:
