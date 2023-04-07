@@ -1,7 +1,7 @@
 from wacrobot.robot import Robot
 
 # Create a robot named "hoot"
-name = "noot"
+name = "beep"
 robot = Robot(name)
 
 # Display "Hi 123!" for 3 seconds

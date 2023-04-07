@@ -2,7 +2,10 @@ import asyncio
 import json
 import logging
 
-from bleak import BleakClient
+from bleak import (
+    BleakClient,
+    BleakScanner
+)
 
 from .commands import (
     DisplayDotMatrixCommand,
@@ -20,13 +23,15 @@ class Robot:
         self.commands = []
         DEBUG = debug
 
-        with open("wacrobot/devices.json", "r") as f:
+        with open("wacrobot/devices_name.json", "r") as f:
             self.device_map = json.load(f)
 
         if self.name not in self.device_map:
-            self.address = name
+            self.name = name
         else:
-            self.address = self.device_map[self.name]
+            self.name = self.device_map[self.name]
+
+        print(self.name)
 
     def led(self, r, g, b, duration: float = 0):
         self.commands.append(LEDCommand(r, g, b))
@@ -70,7 +75,21 @@ class Robot:
         self.commands = []
 
     async def _connect_and_run(self):
-        async with BleakClient(self.address) as client:
+        scanner = BleakScanner()
+        devices = await scanner.discover(timeout=2.0, return_adv=False)
+
+        device = None
+        for d in devices:
+            if d.name == self.name:
+                device = d
+                break
+        
+        if device is None:
+            raise Exception("Device not found")
+        
+        logging.debug(f"found device {device.name} at {device.address}")
+
+        async with BleakClient(device.address) as client:
             logging.debug("connected to device")
             await self._execute(client)
 
