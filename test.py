@@ -1,9 +1,11 @@
 from wacrobot.robot import Robot
 
-robot = Robot("beep", True)
+# Create a robot named "hoot"
+name = "noot"
+robot = Robot(name)
 
 # Display "Hi 123!" for 3 seconds
-robot.displayText("Hi", 1)
+robot.displayText(name.upper(), 2.5)
 
 # Display bullseye for 1 second
 robot.displayDots(
@@ -50,7 +52,7 @@ robot.led(0, 0, 255, 0.25)
 robot.buzz(440, 0.25)
 
 # Move 30, 40, 60, 80, 100, -30, -40, -60, -80, -100 percentages for 0.5 seconds
-for x in (-100, -80, -60, 60, 80, 100):
+for x in [-100, -80, -60, 60, 80, 100]:
     print(x)
     # Move forward at x% speed for 0.5 seconds
     robot.move(x, -x, 0.25)
