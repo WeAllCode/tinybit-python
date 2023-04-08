@@ -1,4 +1,4 @@
-from wacrobot.robot import Robot
+from weallcode_robot import Robot
 
 # Create a robot
 name = "beep"

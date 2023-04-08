@@ -3,6 +3,7 @@ __author__ = "Blaine Rothrock"
 __credits__ = "We All Code"
 
 import logging
+from .robot import Robot
 
 logging.basicConfig(
     filename="wac.log",
