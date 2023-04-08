@@ -1,7 +1,7 @@
 from wacrobot.robot import Robot
 
 # Create a robot
-name = "bzzt"
+name = "beep"
 robot = Robot(name)
 
 # Display the robot's name (uppercased) on the robot's display for 2.5 seconds
