@@ -1,4 +1,4 @@
-from wacrobot.robot import Robot
+from weallcode_robot import Robot
 
 
 def draw_progressBar(robot: Robot, duration=0.5):

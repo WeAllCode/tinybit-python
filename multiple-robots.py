@@ -1,6 +1,6 @@
 import threading
 
-from wacrobot.robot import Robot
+from weallcode_robot import Robot
 
 
 def run_robot(robot):
