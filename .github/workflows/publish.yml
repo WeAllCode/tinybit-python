@@ -50,7 +50,7 @@ jobs:
           --sdist
           --wheel
           --outdir dist/
-          weallcode-robot
+          weallcode_robot
 
       # retrieve your distributions here
       - name: Publish package distributions to PyPI
