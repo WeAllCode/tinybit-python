@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "weallcode_robot"
-version = "3.0.1"
+version = "3.0.2"
 description = "Micro:bit TinyBit BLE Python Library"
 license = "MIT"
 authors = [
