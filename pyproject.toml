@@ -2,42 +2,42 @@
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[project]
-name = "weallcode_robot"
-description = "We All Code Robot Client"
-readme = "README.md"
-requires-python = ">=3.7"
-license = "MIT"
-authors = [
-    {name="Ali Karbassi", email="ali@karbassi.com"},
-    {name="Blaine Rothrock", email="blaine.p.rothrock@gmail.com"},
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.4",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-]
-dependencies = [
-    'bleak>=0.20.1,<0.21.0'
-]
-dynamic = ["version"]
+# [project]
+# name = "weallcode_robot"
+# description = "We All Code Robot Client"
+# readme = "README.md"
+# requires-python = ">=3.7"
+# license = "MIT"
+# authors = [
+#     { name="Ali Karbassi", email="ali@karbassi.com" },
+#     { name="Blaine Rothrock", email="blaine.p.rothrock@gmail.com" },
+# ]
+# classifiers = [
+#     "Development Status :: 4 - Beta",
+#     "License :: OSI Approved :: MIT License",
+#     "Programming Language :: Python",
+#     "Programming Language :: Python :: 3 :: Only",
+#     "Programming Language :: Python :: 3",
+#     "Programming Language :: Python :: 3.4",
+#     "Programming Language :: Python :: 3.5",
+#     "Programming Language :: Python :: 3.6",
+#     "Programming Language :: Python :: 3.7",
+#     "Programming Language :: Python :: 3.8",
+#     "Programming Language :: Python :: 3.9",
+#     "Programming Language :: Python :: 3.10",
+#     "Programming Language :: Python :: 3.11",
+# ]
+# dependencies = [
+#     'bleak>=0.20.1,<0.21.0'
+# ]
+# dynamic = ["version"]
 
-[project.urls]
-Homepage = "https://github.com/WeAllCode/tinybit-python"
-Documentation = "https://github.com/WeAllCode/tinybit-python"
+# [project.urls]
+# Homepage = "https://github.com/WeAllCode/tinybit-python"
+# Documentation = "https://github.com/WeAllCode/tinybit-python"
 
 [tool.poetry]
-name = "robot-v2"
+name = "weallcode_robot"
 version = "3.0.1"
 description = ""
 authors = [
@@ -45,6 +45,10 @@ authors = [
     "Ali Karbassi <ali@weallcode.org>",
 ]
 readme = "README.md"
+license = "MIT"
+packages = [
+    { include = "weallcode_robot" },
+]
 
 [tool.isort]
 profile = "black"
