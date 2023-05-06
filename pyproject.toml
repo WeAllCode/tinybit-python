@@ -1,12 +1,37 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
-name = "robot-v2"
-version = "3.0.1"
-description = ""
+name = "weallcode_robot"
+version = "3.0.2"
+description = "Micro:bit TinyBit BLE Python Library"
+license = "MIT"
 authors = [
     "Blaine Rothrock <blaine.p.rothrock@gmail.com>",
     "Ali Karbassi <ali@weallcode.org>",
 ]
 readme = "README.md"
+homepage = "https://github.com/WeAllCode/tinybit-python"
+repository = "https://github.com/WeAllCode/tinybit-python"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+packages = [
+    { include = "weallcode_robot" },
+]
 
 [tool.isort]
 profile = "black"
@@ -20,7 +45,3 @@ black = "^23.3.0"
 pre-commit = "^3.2.1"
 isort = "^5.12.0"
 ruff = "^0.0.260"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

@@ -1,6 +1,4 @@
-__version__ = "3.0.1"
-__author__ = "Blaine Rothrock"
-__credits__ = "We All Code"
+__version__ = "3.0.2"
 
 import logging
 

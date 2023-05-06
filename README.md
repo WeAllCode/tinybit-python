@@ -17,7 +17,7 @@ poetry install
 The `example.py` script demonstrates how to use the package to control the robot.
 
 ```python
-from robot_v2.robot import Robot
+from weallcode_robot import Robot
 
 robot = Robot("WAC")
 

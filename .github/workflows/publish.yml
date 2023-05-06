@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - auto-publish
+  workflow_dispatch:
 
 jobs:
-  pypi-publish:
+  build-n-publish:
     name: Upload release to PyPI
     runs-on: ubuntu-latest
 
@@ -34,8 +36,22 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-publish
 
+      - name: Install pypa/build
+        run: >-
+          python -m
+          pip install
+          build
+          --user
+
+      - name: Build a binary wheel and a source tarball
+        run: >-
+          python -m
+          build
+          --sdist
+          --wheel
+          --outdir dist/
+          .
+
       # retrieve your distributions here
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: weallcode_robot
