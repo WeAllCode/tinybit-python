@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "robot-v2"
-version = "0.1.0"
+version = "3.0.1"
 description = ""
 authors = [
     "Blaine Rothrock <blaine.p.rothrock@gmail.com>",

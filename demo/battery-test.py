@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from wacrobot.robot import Robot
+from weallcode_robot import Robot
 
 robot = Robot("boop")
 
