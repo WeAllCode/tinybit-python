@@ -104,7 +104,7 @@ class Robot:
     def clearDisplay(self):
         self.commands.append(DisplayDotMatrixCommand())
 
-    def buzz(self, frequency: int, duration: float = 0):
+    def buzz(self, frequency: int, duration: float = 0.25):
         self.commands.append(BuzzerCommand(frequency))
         self.wait(duration)
         self.commands.append(BuzzerCommand(0))
