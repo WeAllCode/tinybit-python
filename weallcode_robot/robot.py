@@ -76,7 +76,7 @@ class Robot:
             self.name = name
         else:
             self.name = self.device_map[self.name]
-
+    
     def led(self, r, g, b, duration: float = 0):
         self.commands.append(LEDCommand(r, g, b))
         self.wait(duration)
@@ -144,3 +144,5 @@ class Robot:
             self.commands.append(LEDCommand(0, 0, 0))
             self.commands.append(BuzzerCommand(0))
         asyncio.run(self._connect_and_run())
+
+        print(f"\n{self.name} Done!\n")
