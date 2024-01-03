@@ -49,13 +49,11 @@ robot.led(0, 255, 0, 0.25)
 robot.led(0, 0, 255, 0.25)
 
 # Play a tone (Hz) for .5 seconds
-robot.buzz(440, 0.25)
+# robot.buzz(440, 0.25)
 
 # Move 30, 40, 60, 80, 100, -30, -40, -60, -80, -100 percentages for 0.5 seconds
-for x in [-100, -80, -60, 60, 80, 100]:
-    # Move forward at x% speed for 0.5 seconds
-    robot.move(x, -x, 0.25)
-    robot.stop()
-    robot.wait(0.25)
-
-robot.run()
+# for x in [-100, -80, -60, 60, 80, 100]:
+#     # Move forward at x% speed for 0.5 seconds
+#     robot.move(x, -x, 0.25)
+#     robot.stop()
+#     robot.wait(0.25)
