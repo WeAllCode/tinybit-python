@@ -1,8 +1,74 @@
 import asyncio
 import logging
+from queue import Queue
 
 from bleak import BleakClient
 
+from .utils import copy_asyncio_queue, empty_asyncio_queue
+
+
+class CommandQueue():
+    def __init__(self, name: str):
+        self.name = name
+        
+        self.queue = asyncio.Queue(maxsize=100)
+        self._queue = None
+
+    def put(self, command):
+        self.queue.put_nowait(command)
+
+    async def get(self):
+        return await self.queue.get()
+    
+    def empty(self):
+        return self.queue.empty()
+    
+    def led(self, r, g, b, duration: float = 0):
+        self.put(LEDCommand(r, g, b))
+        self.wait(duration)
+
+    def move(self, right, left, duration: float = 0):
+        self.put(MoveCommand(left, right))
+        self.wait(duration)
+
+    def stop(self, duration: float = 0):
+        self.put(MoveCommand(0, 0))
+        self.wait(duration)
+
+    def wait(self, duration: float):
+        if duration > 0:
+            self.put(WaitCommand(duration))
+
+    def displayText(self, text: str, duration: float = 0):
+        self.put(DisplayTextCommand(text))
+        self.wait(duration)
+
+    def displayDots(self, matrix: list[int], duration: float = 0):
+        self.put(DisplayDotMatrixCommand(matrix))
+        self.wait(duration)
+
+    def clearDisplay(self):
+        self.put(DisplayDotMatrixCommand())
+
+    def buzz(self, frequency: int, duration: float = 0.25):
+        self.put(BuzzerCommand(frequency))
+        self.wait(duration)
+
+    async def clear(self, immediate: bool = False):
+        if immediate:
+            await empty_asyncio_queue(self.queue)
+        
+        self.put(DisplayDotMatrixCommand())
+        self.put(MoveCommand(0, 0))
+        self.put(LEDCommand(0, 0, 0))
+        self.put(BuzzerCommand(0))
+
+    async def save(self):
+        self._queue = await copy_asyncio_queue(self.queue)
+
+    async def restore(self):
+        if self._queue:
+            self.queue = await copy_asyncio_queue(self._queue)
 
 class RobotCommand:
     def __init__(self):
