@@ -20,6 +20,7 @@ class RobotUI(tk.Tk):
         self.redo_button.pack()
 
     def update(self):
+        
         if self.robot.state == RobotState.DISCONNECTED:
             self.main_label['text'] = 'disconnected'
             self.cancel_button['state'] = tk.DISABLED
@@ -41,7 +42,7 @@ class RobotUI(tk.Tk):
 
     def clear_robot(self):
         print('clearing')
-        asyncio.create_task(self.robot.commands.clear(immediate=True))
+        asyncio.create_task(self.robot.commands.clear_immediate())
 
     def redo(self):
         if self.robot.state == RobotState.CONNECTED_IDLE:

@@ -48,6 +48,8 @@ robot.led(0, 255, 0, 0.25)
 # Display blue for 0.5 second
 robot.led(0, 0, 255, 0.25)
 
+robot.button_b.led(0, 0, 255, 1)
+
 # Play a tone (Hz) for .5 seconds
 # robot.buzz(440, 0.25)
 

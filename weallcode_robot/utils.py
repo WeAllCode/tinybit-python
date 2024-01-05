@@ -3,6 +3,8 @@ import queue
 import asyncio
 from enum import Enum
 
+buttons_characteristic_uuid = '1A270002-C2ED-4D11-AD1E-FC06D8A02D37'
+
 device_name_map = {
     "beep": "WAC-2463",
     "boop": "WAC-7F36",
@@ -53,6 +55,13 @@ device_name_map = {
     "zip": "",
     "zot": "",
 }
+
+class DynamicObject:
+    def __init__(self):
+        pass
+
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
 
 class RobotState(Enum):
     DISCONNECTED = 0

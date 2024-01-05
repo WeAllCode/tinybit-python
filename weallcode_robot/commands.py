@@ -54,10 +54,11 @@ class CommandQueue():
         self.put(BuzzerCommand(frequency))
         self.wait(duration)
 
-    async def clear(self, immediate: bool = False):
-        if immediate:
-            await empty_asyncio_queue(self.queue)
-        
+    async def clear_immediate(self):
+        await empty_asyncio_queue(self.queue)
+        self.clear()
+    
+    def clear(self):
         self.put(DisplayDotMatrixCommand())
         self.put(MoveCommand(0, 0))
         self.put(LEDCommand(0, 0, 0))

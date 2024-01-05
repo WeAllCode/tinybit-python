@@ -6,6 +6,7 @@ from queue import Queue
 import tkinter as tk
 
 from bleak import BleakClient, BleakScanner
+from bleak.backends.characteristic import BleakGATTCharacteristic
 
 from .commands import (
     CommandQueue,
@@ -18,7 +19,12 @@ from .commands import (
 )
 
 from .robot_ui import RobotUI
-from .utils import RobotState, device_name_map
+from .utils import (
+    RobotState, 
+    DynamicObject,
+    device_name_map, 
+    buttons_characteristic_uuid
+)
 
 class Robot(CommandQueue):
     def __init__(self, name, debug=False, scan_timeout=2.0):
@@ -49,6 +55,28 @@ class Robot(CommandQueue):
         self.clearDisplay = self.main_queue.clearDisplay
         self.buzz = self.main_queue.buzz
         self.clear = self.main_queue.clear
+
+        self.button_a = DynamicObject()
+        self.button_a.led = self.button_a_queue.led
+        self.button_a.move = self.button_a_queue.move
+        self.button_a.stop = self.button_a_queue.stop
+        self.button_a.wait = self.button_a_queue.wait
+        self.button_a.displayText = self.button_a_queue.displayText
+        self.button_a.displayDots = self.button_a_queue.displayDots
+        self.button_a.clearDisplay = self.button_a_queue.clearDisplay
+        self.button_a.buzz = self.button_a_queue.buzz
+        self.button_a.clear = self.button_a_queue.clear
+
+        self.button_b = DynamicObject()
+        self.button_b.led = self.button_b_queue.led
+        self.button_b.move = self.button_b_queue.move
+        self.button_b.stop = self.button_b_queue.stop
+        self.button_b.wait = self.button_b_queue.wait
+        self.button_b.displayText = self.button_b_queue.displayText
+        self.button_b.displayDots = self.button_b_queue.displayDots
+        self.button_b.clearDisplay = self.button_b_queue.clearDisplay
+        self.button_b.buzz = self.button_b_queue.buzz
+        self.button_b.clear = self.button_b_queue.clear
         
         self._update_status('initializing ...', RobotState.DISCONNECTED)
         
@@ -65,7 +93,6 @@ class Robot(CommandQueue):
             await command.execute(client)
 
         self._update_status('idle', RobotState.CONNECTED_IDLE)
-
     
     async def _connect(self):
         scanner = BleakScanner()
@@ -86,25 +113,45 @@ class Robot(CommandQueue):
         self._update_status(f"found device {device.name} at {device.address}", RobotState.CONNECTING)
         logging.debug(f"found device {device.name} at {device.address}")
 
+        def _button_handler_callback(characteristic: BleakGATTCharacteristic, data: bytearray):
+            if self.state == RobotState.CONNECTED_IDLE:
+                btn = int(data[0])
+                if btn == 1:
+                    self.commands = self.button_a_queue
+                    print('button a pressed') 
+                elif btn == 2:
+                    self.commands = self.button_b_queue
+                    print('button b pressed')
+
         self.client = BleakClient(device)
         self._update_status('connecting ...', RobotState.CONNECTING)
         await self.client.connect()
+        await self.client.start_notify(buttons_characteristic_uuid, _button_handler_callback)
         self._update_status('connected', RobotState.CONNECTED_IDLE)
 
     async def _connect_and_run(self):
         await self._connect()
         if self.client is not None:
             await self._execute(self.client)
-
-    def clear(self):
-        self.commands.clear(immediate=True)
     
     def _run_sync_wrapper(self):                        
         loop = asyncio.get_event_loop()
         
         try:
-            loop.run_until_complete(self.commands.clear())
+            self.commands.clear()
+            
+            if self.button_a_queue.empty(): 
+                self.button_a.displayText("A", 1)
+            if self.button_b_queue.empty(): 
+                self.button_b.displayText("B", 1)
+
+            self.button_a_queue.clear()
+            self.button_b_queue.clear()
+
             loop.run_until_complete(self.commands.save())
+            loop.run_until_complete(self.button_a_queue.save())
+            loop.run_until_complete(self.button_b_queue.save())
+
             t1 = loop.create_task(self._ui_loop())
             t2 = loop.create_task(self.run())
 
@@ -112,7 +159,7 @@ class Robot(CommandQueue):
         
         except tk.TclError:
             # cancel current command and clear the robot
-            self.clear()
+            loop.run_until_complete(self.commands.clear_immediate())
             
             # complete clear on current loop
             if self.client is None: 
@@ -142,6 +189,13 @@ class Robot(CommandQueue):
             if self.client is not None:
                 if self.commands.empty():
                     self._update_status('idle', RobotState.CONNECTED_IDLE)
+                    self.commands = self.main_queue
+                    
+                    if self.button_a_queue.empty():
+                        await self.button_a_queue.restore()
+                    if self.button_b_queue.empty():
+                        await self.button_b_queue.restore()
+                    
                     await asyncio.sleep(0.1)
                 else:
                     command = await self.commands.get()
