@@ -118,10 +118,8 @@ class Robot(CommandQueue):
                 btn = int(data[0])
                 if btn == 1:
                     self.commands = self.button_a_queue
-                    print('button a pressed') 
                 elif btn == 2:
                     self.commands = self.button_b_queue
-                    print('button b pressed')
 
         self.client = BleakClient(device)
         self._update_status('connecting ...', RobotState.CONNECTING)
@@ -200,7 +198,6 @@ class Robot(CommandQueue):
                 else:
                     command = await self.commands.get()
                     self._update_status(f"executing {command.__class__.__name__} ...", RobotState.RUNNING)
-                    print(f"running command: {command.__class__.__name__}")
                     await command.execute(self.client)
                     
             else:

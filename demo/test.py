@@ -4,6 +4,13 @@ from weallcode_robot import Robot
 name = "beep"
 robot = Robot(name)
 
+# assign button A to set LED to blue for 1 second
+robot.button_a.led(0, 0, 255, 1)
+
+# assign button B to set LED to red & buzz at 440Hz for 0.5 seconds
+robot.button_b.led(255, 0, 0)
+robot.button_b.buzz(440, 0.5)
+
 # Display the robot's name (uppercased) on the robot's display for 2.5 seconds
 robot.displayText(name.upper(), 2.5)
 
@@ -48,14 +55,12 @@ robot.led(0, 255, 0, 0.25)
 # Display blue for 0.5 second
 robot.led(0, 0, 255, 0.25)
 
-robot.button_b.led(0, 0, 255, 1)
-
 # Play a tone (Hz) for .5 seconds
-# robot.buzz(440, 0.25)
+robot.buzz(440, 0.25)
 
 # Move 30, 40, 60, 80, 100, -30, -40, -60, -80, -100 percentages for 0.5 seconds
-# for x in [-100, -80, -60, 60, 80, 100]:
-#     # Move forward at x% speed for 0.5 seconds
-#     robot.move(x, -x, 0.25)
-#     robot.stop()
-#     robot.wait(0.25)
+for x in [-100, -80, -60, 60, 80, 100]:
+    # Move forward at x% speed for 0.5 seconds
+    robot.move(x, -x, 0.25)
+    robot.stop()
+    robot.wait(0.25)
