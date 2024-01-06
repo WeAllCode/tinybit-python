@@ -23,8 +23,8 @@ class CommandQueue():
     def empty(self):
         return self.queue.empty()
     
-    def led(self, r, g, b, duration: float = 0):
-        self.put(LEDCommand(r, g, b))
+    def led(self, red, green, blue, duration: float = 0):
+        self.put(LEDCommand(red, green, blue))
         self.wait(duration)
 
     def move(self, right, left, duration: float = 0):
