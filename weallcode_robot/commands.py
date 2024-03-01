@@ -15,7 +15,8 @@ class CommandQueue():
         self._queue = None
 
     def put(self, command):
-        self.queue.put_nowait(command)
+        if not self.queue.full():
+            self.queue.put_nowait(command)
 
     async def get(self):
         return await self.queue.get()
@@ -26,50 +27,67 @@ class CommandQueue():
     def led(self, red, green, blue, duration: float = 0):
         self.put(LEDCommand(red, green, blue))
         self.wait(duration)
+        return self
 
     def move(self, right, left, duration: float = 0):
         self.put(MoveCommand(left, right))
         self.wait(duration)
+        return self
 
     def stop(self, duration: float = 0):
         self.put(MoveCommand(0, 0))
         self.wait(duration)
+        return self
 
     def wait(self, duration: float):
         if duration > 0:
             self.put(WaitCommand(duration))
+        return self
 
     def displayText(self, text: str, duration: float = 0):
         self.put(DisplayTextCommand(text))
         self.wait(duration)
+        return self
 
     def displayDots(self, matrix: list[int], duration: float = 0):
         self.put(DisplayDotMatrixCommand(matrix))
         self.wait(duration)
+        return self
 
     def clearDisplay(self):
         self.put(DisplayDotMatrixCommand())
+        return self
 
     def buzz(self, frequency: int, duration: float = 0.25):
         self.put(BuzzerCommand(frequency))
         self.wait(duration)
+        return self
 
     async def clear_immediate(self):
         await empty_asyncio_queue(self.queue)
         self.clear()
+        return self
     
     def clear(self):
         self.put(DisplayDotMatrixCommand())
         self.put(MoveCommand(0, 0))
         self.put(LEDCommand(0, 0, 0))
         self.put(BuzzerCommand(0))
+        return self
 
     async def save(self):
         self._queue = await copy_asyncio_queue(self.queue)
 
+    def save_sync(self):
+        self._queue = self.queue
+
     async def restore(self):
         if self._queue:
             self.queue = await copy_asyncio_queue(self._queue)
+
+    def restore_sync(self):
+        if self._queue:
+            self.queue = self._queue
 
 class RobotCommand:
     def __init__(self):
