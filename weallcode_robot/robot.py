@@ -1,9 +1,16 @@
+import time
 import asyncio
 import logging
+import atexit
+from queue import Queue
+import tkinter as tk
+from datetime import datetime, timedelta
 
 from bleak import BleakClient, BleakScanner
+from bleak.backends.characteristic import BleakGATTCharacteristic
 
 from .commands import (
+    CommandQueue,
     BuzzerCommand,
     DisplayDotMatrixCommand,
     DisplayTextCommand,
@@ -12,137 +19,77 @@ from .commands import (
     WaitCommand,
 )
 
-device_name_map = {
-    "beep": "WAC-2463",
-    "boop": "WAC-7F36",
-    "buzz": "WAC-98CE",
-    "bzzt": "WAC-D329",
-    "chirp": "WAC-1A74",
-    "click": "WAC-27B7",
-    "clonk": "WAC-9776",
-    "clunk": "WAC-7740",
-    "crash": "WAC-22F2",
-    "dink": "WAC-6BC7",
-    "doot": "WAC-47F1",
-    "fizz": "WAC-121A",
-    "honk": "WAC-5613",
-    "hoot": "WAC-9717",
-    "jolt": "WAC-A466",
-    "noot": "WAC-EC1C",
-    "oink": "",
-    "pew": "",
-    "ping": "",
-    "pong": "",
-    "pop": "",
-    "pow": "",
-    "purr": "",
-    "quark": "",
-    "ring": "",
-    "roar": "",
-    "sigh": "",
-    "snip": "",
-    "sput": "",
-    "swsh": "",
-    "tape": "",
-    "thud": "",
-    "thum": "",
-    "tik": "",
-    "tok": "",
-    "tong": "",
-    "vroom": "",
-    "whim": "",
-    "whir": "",
-    "whiz": "",
-    "whoop": "",
-    "whum": "",
-    "wizz": "",
-    "wow": "",
-    "yip": "",
-    "zap": "",
-    "zip": "",
-    "zot": "",
-}
+from .robot_ui import RobotUI
+from .utils import (
+    RobotState, 
+    DynamicObject,
+    device_name_map, 
+    buttons_characteristic_uuid
+)
 
-
-class Robot:
-    def __init__(self, name, debug=False, scan_timeout=2.0):
-        self.name = name.lower()
-        self.commands = []
-        self.scan_timeout = scan_timeout
-
-        self.device_map = device_name_map
-
-        if self.name not in self.device_map:
-            self.name = name
+class Robot(CommandQueue):
+    def __init__(self, name, debug=False):
+        
+        self.display_name = name.lower()
+        if self.display_name not in device_name_map:
+            self.name = self.display_name
         else:
-            self.name = self.device_map[self.name]
+            self.name = device_name_map[self.display_name]
+
+        self.ui = RobotUI(robot=self)
+        
+        self.command_tasks = None
+        self.last_key_event = datetime.now()
+        
+        self.main_queue = CommandQueue(f'{self.display_name} main')
+        self.button_a_queue = CommandQueue(f'{self.display_name} button a')
+        self.button_b_queue = CommandQueue(f'{self.display_name} button b')
+        self.commands = self.main_queue
+
+        # map commands
+        self.led = self.main_queue.led
+        self.move = self.main_queue.move
+        self.stop = self.main_queue.stop
+        self.wait = self.main_queue.wait
+        self.displayText = self.main_queue.displayText
+        self.displayDots = self.main_queue.displayDots
+        self.clearDisplay = self.main_queue.clearDisplay
+        self.buzz = self.main_queue.buzz
+        self.clear = self.main_queue.clear
+
+        self.button_a = DynamicObject()
+        self.button_a.led = self.button_a_queue.led
+        self.button_a.move = self.button_a_queue.move
+        self.button_a.stop = self.button_a_queue.stop
+        self.button_a.wait = self.button_a_queue.wait
+        self.button_a.displayText = self.button_a_queue.displayText
+        self.button_a.displayDots = self.button_a_queue.displayDots
+        self.button_a.clearDisplay = self.button_a_queue.clearDisplay
+        self.button_a.buzz = self.button_a_queue.buzz
+        self.button_a.clear = self.button_a_queue.clear
+
+        self.button_b = DynamicObject()
+        self.button_b.led = self.button_b_queue.led
+        self.button_b.move = self.button_b_queue.move
+        self.button_b.stop = self.button_b_queue.stop
+        self.button_b.wait = self.button_b_queue.wait
+        self.button_b.displayText = self.button_b_queue.displayText
+        self.button_b.displayDots = self.button_b_queue.displayDots
+        self.button_b.clearDisplay = self.button_b_queue.clearDisplay
+        self.button_b.buzz = self.button_b_queue.buzz
+        self.button_b.clear = self.button_b_queue.clear
+        
+        atexit.register(self.ui.run)
     
-    def led(self, r, g, b, duration: float = 0):
-        self.commands.append(LEDCommand(r, g, b))
-        self.wait(duration)
+    def set_key_binding(self, key) -> CommandQueue:
+        valid_keys = {
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'space', 'enter',
+            'up', 'down', 'left', 'right'
+        }
 
-    def move(self, right, left, duration: float = 0):
-        self.commands.append(MoveCommand(left, right))
-        self.wait(duration)
-
-    def stop(self, duration: float = 0):
-        self.commands.append(MoveCommand(0, 0))
-        self.wait(duration)
-
-    def wait(self, duration: float):
-        if duration > 0:
-            self.commands.append(WaitCommand(duration))
-
-    def displayText(self, text: str, duration: float = 0):
-        self.commands.append(DisplayTextCommand(text))
-        self.wait(duration)
-
-    def displayDots(self, matrix: list[int], duration: float = 0):
-        self.commands.append(DisplayDotMatrixCommand(matrix))
-        self.wait(duration)
-
-    def clearDisplay(self):
-        self.commands.append(DisplayDotMatrixCommand())
-
-    def buzz(self, frequency: int, duration: float = 0.25):
-        self.commands.append(BuzzerCommand(frequency))
-        self.wait(duration)
-        self.commands.append(BuzzerCommand(0))
-
-    async def _execute(self, client):
-        logging.debug(client)
-        for i, command in enumerate(self.commands):
-            logging.debug(f"command {i}/{len(self.commands)}")
-
-            await command.execute(client)
-
-        self.commands = []
-
-    async def _connect_and_run(self):
-        scanner = BleakScanner()
-        devices = await scanner.discover(timeout=self.scan_timeout, return_adv=False)
-
-        device = None
-        for d in devices:
-            if d.name == self.name:
-                device = d
-                break
-
-        if device is None:
-            raise Exception("Device not found")
-
-        logging.debug(f"found device {device.name} at {device.address}")
-
-        async with BleakClient(device.address) as client:
-            logging.debug("connected to device")
-            await self._execute(client)
-
-    def run(self, clear=True):
-        if clear:
-            self.commands.append(DisplayDotMatrixCommand())
-            self.commands.append(MoveCommand(0, 0))
-            self.commands.append(LEDCommand(0, 0, 0))
-            self.commands.append(BuzzerCommand(0))
-        asyncio.run(self._connect_and_run())
-
-        print(f"\n{self.name} Done!\n")
+        if key not in valid_keys:
+            raise ValueError(f"Invalid key {key}, must be in set {valid_keys}")
+            
+        return self.ui.bind(key)
