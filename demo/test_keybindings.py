@@ -1,7 +1,7 @@
 from weallcode_robot import Robot
 
 # Create a robot
-name = "WAC-C9B9"
+name = "WAC-2463"
 robot = Robot(name)
 
 robot.led(0,0,255,1)

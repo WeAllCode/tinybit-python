@@ -36,7 +36,8 @@ robot.move(0, 0)            # Stop the robot
 
 robot.led(0, 0, 0)          # Turn off the LED
 
-robot.run()                 # Execute the commands
+a = robot.set_key_binding('a').led(0, 0, 255, 1) # set LED color one button A
+w = robot.set_key_binding('w').move(100, 100)    # bind move forward to key W
 ```
 
 ## API
