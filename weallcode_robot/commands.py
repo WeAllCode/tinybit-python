@@ -29,7 +29,7 @@ class CommandQueue():
         self.wait(duration)
         return self
 
-    def move(self, right, left, duration: float = 0):
+    def move(self, left, right, duration: float = 0):
         self.put(MoveCommand(left, right))
         self.wait(duration)
         return self

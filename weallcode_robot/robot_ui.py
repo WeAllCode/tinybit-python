@@ -81,16 +81,10 @@ class RobotUI(App):
         return self.key_commands[key]
 
     async def _connect_and_run(self):
-        scanner = BleakScanner()
         self.update_status(f'scanning for {self.robot.display_name} ...')
-        devices = await scanner.discover(timeout=2.0, return_adv=False)
+        device = await BleakScanner.find_device_by_name(self.robot.name, timeout=10.0)
 
         self.update_status(f'connecting to {self.robot.display_name} ...')
-        device = None
-        for d in devices:
-            if d.name is not None and d.name.lower() == self.robot.name:
-                device = d
-                break
 
         if device is None:
             self.update_status(f"device {self.robot.name} not found. Quit and try again.")
@@ -129,6 +123,9 @@ class RobotUI(App):
 
         await self.execute(commands)
 
+        if self.robot.button_a_queue.empty() and self.robot.button_b_queue.empty() and not self.key_commands:
+            self.exit()
+
     async def execute(self, commands):     
         if self.running == 1: return
 
@@ -138,8 +135,11 @@ class RobotUI(App):
             # self.update_status(f"executing {command.__class__.__name__} ...")
             await command.execute(self.client)
 
-        self.update_status('idle')
-        self.running = 0
+        if not self.key_commands and self.robot.button_a_queue.empty() and self.robot.button_b_queue.empty():
+            return
+        else:
+            self.update_status('idle')
+            self.running = 0
 
     async def clear(self):
         self.running = 1
