@@ -1,23 +1,23 @@
 from weallcode_robot import Robot
 
 # Create a robot
-name = "WAC-C9B9"
+name = "dink"
 robot = Robot(name)
 
 # assign button A to set LED to blue for 1 second
-robot.button_a.led(0, 0, 255, 1)
+robot.buttonA.led(0, 0, 255, 1)
 
 # assign button B to set LED to red & buzz at 440Hz for 0.5 seconds
-robot.button_b.led(255, 0, 0)
+robot.buttonB.led(255, 0, 0)
 
-a = robot.set_key_binding('a').led(0, 0, 255, 1)
+# a = robot.setKeyBinding('a').led(0, 0, 255, 1)
 
 # Display the robot's name (uppercased) on the robot's display for 2.5 seconds
 robot.displayText(name.upper(), 2.5)
-
+robot.move(92,100, 1.5)
 # Display bullseye for 1 second
 robot.displayDots(
-    # fmt: off
+    # fmt: offa
     [
         1, 1, 1, 1, 1,
         1, 0, 0, 0, 1,
