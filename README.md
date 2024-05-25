@@ -36,8 +36,8 @@ robot.move(0, 0)            # Stop the robot
 
 robot.led(0, 0, 0)          # Turn off the LED
 
-a = robot.set_key_binding('a').led(0, 0, 255, 1) # set LED color one button A
-w = robot.set_key_binding('w').move(100, 100)    # bind move forward to key W
+a = robot.setKeyBinding('a').led(0, 0, 255, 1) # set LED color one button A
+w = robot.setKeyBinding('w').move(100, 100)    # bind move forward to key W
 ```
 
 ## API
@@ -52,8 +52,8 @@ robot = Robot("WAC")
 
 #### Methods
 
-- `led(r: int, g: int, b: int)`: Sets the LED color. Values should be integers between 0 and 255.
-- `move(right: int, left: int)`: Sets the motor speeds. Values should be integers between -100 and 100.
+- `led(red: int, green: int, blue: int, duration: int)`: Sets the LED color. Values should be integers between 0 and 255.
+- `move(left: int, right: int, duration: int)`: Sets the motor speeds. Values should be integers between -100 and 100.
 - `wait(duration: float)`: Adds a wait command with a given duration in seconds.
 - `run()`: Executes the commands in the order they were added.
 

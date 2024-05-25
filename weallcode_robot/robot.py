@@ -57,31 +57,31 @@ class Robot(CommandQueue):
         self.buzz = self.main_queue.buzz
         self.clear = self.main_queue.clear
 
-        self.button_a = DynamicObject()
-        self.button_a.led = self.button_a_queue.led
-        self.button_a.move = self.button_a_queue.move
-        self.button_a.stop = self.button_a_queue.stop
-        self.button_a.wait = self.button_a_queue.wait
-        self.button_a.displayText = self.button_a_queue.displayText
-        self.button_a.displayDots = self.button_a_queue.displayDots
-        self.button_a.clearDisplay = self.button_a_queue.clearDisplay
-        self.button_a.buzz = self.button_a_queue.buzz
-        self.button_a.clear = self.button_a_queue.clear
+        self.buttonA = DynamicObject()
+        self.buttonA.led = self.button_a_queue.led
+        self.buttonA.move = self.button_a_queue.move
+        self.buttonA.stop = self.button_a_queue.stop
+        self.buttonA.wait = self.button_a_queue.wait
+        self.buttonA.displayText = self.button_a_queue.displayText
+        self.buttonA.displayDots = self.button_a_queue.displayDots
+        self.buttonA.clearDisplay = self.button_a_queue.clearDisplay
+        self.buttonA.buzz = self.button_a_queue.buzz
+        self.buttonA.clear = self.button_a_queue.clear
 
-        self.button_b = DynamicObject()
-        self.button_b.led = self.button_b_queue.led
-        self.button_b.move = self.button_b_queue.move
-        self.button_b.stop = self.button_b_queue.stop
-        self.button_b.wait = self.button_b_queue.wait
-        self.button_b.displayText = self.button_b_queue.displayText
-        self.button_b.displayDots = self.button_b_queue.displayDots
-        self.button_b.clearDisplay = self.button_b_queue.clearDisplay
-        self.button_b.buzz = self.button_b_queue.buzz
-        self.button_b.clear = self.button_b_queue.clear
+        self.buttonB = DynamicObject()
+        self.buttonB.led = self.button_b_queue.led
+        self.buttonB.move = self.button_b_queue.move
+        self.buttonB.stop = self.button_b_queue.stop
+        self.buttonB.wait = self.button_b_queue.wait
+        self.buttonB.displayText = self.button_b_queue.displayText
+        self.buttonB.displayDots = self.button_b_queue.displayDots
+        self.buttonB.clearDisplay = self.button_b_queue.clearDisplay
+        self.buttonB.buzz = self.button_b_queue.buzz
+        self.buttonB.clear = self.button_b_queue.clear
         
         atexit.register(self.ui.run)
     
-    def set_key_binding(self, key) -> CommandQueue:
+    def setKeyBinding(self, key) -> CommandQueue:
         valid_keys = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
