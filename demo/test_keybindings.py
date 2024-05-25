@@ -2,9 +2,7 @@ from weallcode_robot import Robot
 
 # Create a robot
 name = "dink"
-robot = Robot(name)
-
-robot.led(0,0,255,1)
+name = "WAC-2463"
 
 # a = robot.setKeyBinding('a').led(0, 0, 255, 1)
 # b = robot.setKeyBinding('b').led(255, 0, 0, 1)
@@ -26,6 +24,7 @@ w = robot.setKeyBinding('w').move(100, 100).displayDots(
 )
 
 a = robot.setKeyBinding('a').move(100, 0).displayDots(
+
     # fmt: off
     [
         0, 0, 0, 0, 0,
@@ -37,6 +36,7 @@ a = robot.setKeyBinding('a').move(100, 0).displayDots(
 )
 
 s = robot.setKeyBinding('d').move(0, 100).displayDots(
+
     # fmt: off
     [
         0, 0, 0, 0, 0,
@@ -48,6 +48,7 @@ s = robot.setKeyBinding('d').move(0, 100).displayDots(
 )
 
 d = robot.setKeyBinding('s').move(-100, -100).displayDots(
+
     # fmt: off
     [
         0, 0, 1, 0, 0,

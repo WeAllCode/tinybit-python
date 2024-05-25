@@ -1,6 +1,7 @@
 from weallcode_robot import Robot
 
 # Create a robot
+
 name = "dink"
 robot = Robot(name)
 

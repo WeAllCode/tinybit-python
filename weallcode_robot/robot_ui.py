@@ -89,8 +89,6 @@ class RobotUI(App):
         if device is None:
             self.update_status(f"device {self.robot.name} not found. Quit and try again.")
             return
-        else:
-            self.update_status(f"found device {device.name} at {device.address}")
 
         self.update_status(f"found device {device.name} at {device.address}")
         logging.debug(f"found device {device.name} at {device.address}")
