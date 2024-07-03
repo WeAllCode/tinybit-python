@@ -2,7 +2,7 @@ from weallcode_robot import Robot
 
 # Create a robot
 
-name = "dink"
+name = "WAC-C9B9"
 robot = Robot(name)
 
 # assign button A to set LED to blue for 1 second
