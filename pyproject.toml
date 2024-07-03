@@ -39,7 +39,7 @@ profile = "black"
 [tool.poetry.dependencies]
 python = "^3.11"
 bleak = "^0.20.1"
-textual=="^0.71.0"
+textual = "^0.71.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
