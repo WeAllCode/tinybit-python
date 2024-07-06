@@ -1,8 +1,8 @@
 from weallcode_robot import Robot
 
 # Create a robot
-name = "dink"
-name = "WAC-2463"
+name = "chirp"
+robot = Robot(name)
 
 # a = robot.setKeyBinding('a').led(0, 0, 255, 1)
 # b = robot.setKeyBinding('b').led(255, 0, 0, 1)

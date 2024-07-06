@@ -3,7 +3,6 @@ import asyncio
 import logging
 import atexit
 from queue import Queue
-import tkinter as tk
 from datetime import datetime, timedelta
 
 from bleak import BleakClient, BleakScanner
