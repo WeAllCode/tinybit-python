@@ -29,7 +29,7 @@ from .utils import (
 class Robot(CommandQueue):
     def __init__(self, name, debug=False):
         
-        self.display_name = name.lower()
+        self.display_name = name
         if self.display_name not in device_name_map:
             self.name = self.display_name
         else:
